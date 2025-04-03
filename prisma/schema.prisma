@@ -114,12 +114,12 @@ model Location {
   id        String   @id @default(cuid())
   name      String
   description String
-  image    String[]
+  coverImage String
   category Category
   province Province
   district String?
-  latitude  Float
-  longitude Float
+  latitude  Float?
+  longitude Float?
   favorites Favorite[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -7,12 +7,14 @@ import { AuthService } from './modules/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { LocationModule } from './modules/location/location.module';
+import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
   imports: [
     UserModule,
     AuthModule,
     LocationModule,
+    UploadModule,
     ConfigModule.forRoot({
       isGlobal: true,
     })
