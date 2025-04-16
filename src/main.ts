@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 import * as session from 'express-session';
 import * as passport from 'passport';
+import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   // Force console to show all logs
@@ -19,8 +21,21 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
   
+  // Apply global pipes
+  app.useGlobalPipes(new ValidationPipe());
+  
   // Enable CORS
   app.enableCors();
+  
+  // Swagger setup
+  const config = new DocumentBuilder()
+    .setTitle('Vietnam Tours API')
+    .setDescription('The Vietnam Tours API documentation')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api-docs', app, document);
   
   // Add session middleware before passport initialization
   app.use(

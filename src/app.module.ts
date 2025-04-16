@@ -8,6 +8,9 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { LocationModule } from './modules/location/location.module';
 import { UploadModule } from './modules/upload/upload.module';
+import { BlogModule } from './modules/blog/blog.module';
+import { BlogCommentModule } from './modules/blogComment/blogComment.module';
+import { ReplyModule } from './modules/reply/reply.module';
 
 @Module({
   imports: [
@@ -15,6 +18,9 @@ import { UploadModule } from './modules/upload/upload.module';
     AuthModule,
     LocationModule,
     UploadModule,
+    BlogModule,
+    BlogCommentModule,
+    ReplyModule,
     ConfigModule.forRoot({
       isGlobal: true,
     })
