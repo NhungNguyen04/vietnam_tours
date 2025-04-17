@@ -76,6 +76,7 @@ export class UserService {
         id: true,
         email: true,
         name: true,
+        image: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -89,6 +90,7 @@ export class UserService {
         id: true,
         email: true,
         name: true,
+        image: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -104,6 +106,7 @@ export class UserService {
   async findByEmail(email: string) {
     return prisma.user.findUnique({
       where: { email },
+      select: { id: true, email: true, name: true, password: true, role: true, image: true }
     });
   }
 
@@ -127,6 +130,7 @@ export class UserService {
         id: true,
         email: true,
         name: true,
+        image: true,
         createdAt: true,
         updatedAt: true,
       },

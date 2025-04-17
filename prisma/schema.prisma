@@ -119,6 +119,7 @@ model User {
   BlogVote     BlogVote[]
   CommentVote  CommentVote[]
   ReplyVote    ReplyVote[]
+  trips        TripParticipants[]
 }
 
 model Location {
@@ -133,6 +134,7 @@ model Location {
   longitude   Float?
   favorites   Favorite[]
   blogs       Blog[]     @relation("BlogLocations")
+  trips       Trip[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
@@ -232,4 +234,32 @@ model ReplyVote {
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, replyId])
+}
+
+model Trip {
+  id          String     @id @default(cuid())
+  name        String?
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  hotelName String?
+  hotelAddress String?
+  locationId  String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  location    Location   @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  participants TripParticipants[]
+}
+
+model TripParticipants {
+  id        String   @id @default(cuid())
+  tripId    String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tripId, userId])
 }

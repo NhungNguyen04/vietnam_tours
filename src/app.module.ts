@@ -11,6 +11,7 @@ import { UploadModule } from './modules/upload/upload.module';
 import { BlogModule } from './modules/blog/blog.module';
 import { BlogCommentModule } from './modules/blogComment/blogComment.module';
 import { ReplyModule } from './modules/reply/reply.module';
+import { TripModule } from './modules/trip/trip.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ReplyModule } from './modules/reply/reply.module';
     BlogModule,
     BlogCommentModule,
     ReplyModule,
+    TripModule,
     ConfigModule.forRoot({
       isGlobal: true,
     })
