@@ -43,4 +43,19 @@ export class LocationController {
   remove(@Param('id') id: string) {
     return this.locationService.remove(id);
   }
+
+  @Get('/favorite/:userid')
+  findFavorite(@Param('userid') userid: string) {
+    return this.locationService.findFavorite(userid);
+  }
+
+  @Post('/favorite')
+  addFavorite(@Body() body: { userId: string; locationId: string }) {
+    return this.locationService.addFavorite(body.userId, body.locationId);
+  }
+
+  @Delete('/favorite/:userid/:locationid')
+  removeFavorite(@Param('userid') userid: string, @Param('locationid') locationid: string) {
+    return this.locationService.removeFavorite(userid, locationid);
+  }
 }
