@@ -27,69 +27,69 @@ enum Category {
 }
 
 enum Province {
-    AN_GIANG
-    BA_RIA_VUNG_TAU
-    BAC_GIANG
-    BAC_KAN
-    BAC_LIEU
-    BAC_NINH
-    BEN_TRE
-    BINH_DINH
-    BINH_DUONG
-    BINH_PHUOC
-    BINH_THUAN
-    CA_MAU
-    CAO_BANG
-    DAK_LAK
-    DAK_NONG
-    DIEN_BIEN
-    DONG_NAI
-    DONG_THAP
-    GIA_LAI
-    HA_GIANG
-    HA_NAM
-    HA_TINH
-    HAI_DUONG
-    HAU_GIANG
-    HOA_BINH
-    HUNG_YEN
-    KHANH_HOA
-    KIEN_GIANG
-    KON_TUM
-    LAI_CHAU
-    LAM_DONG
-    LANG_SON
-    LAO_CAI
-    LONG_AN
-    NAM_DINH
-    NGHE_AN
-    NINH_BINH
-    NINH_THUAN
-    PHU_THO
-    PHU_YEN
-    QUANG_BINH
-    QUANG_NAM
-    QUANG_NGAI
-    QUANG_NINH
-    QUANG_TRI
-    SOC_TRANG
-    SON_LA
-    TAY_NINH
-    THAI_BINH
-    THAI_NGUYEN
-    THANH_HOA
-    THUA_THIEN_HUE
-    TIEN_GIANG
-    TRA_VINH
-    TUYEN_QUANG
-    VINH_LONG
-    VINH_PHUC
-    YEN_BAI
-    HA_NOI
-    HAI_PHONG
-    DA_NANG
-    HO_CHI_MINH
-    CAN_THO
+  AN_GIANG
+  BA_RIA_VUNG_TAU
+  BAC_GIANG
+  BAC_KAN
+  BAC_LIEU
+  BAC_NINH
+  BEN_TRE
+  BINH_DINH
+  BINH_DUONG
+  BINH_PHUOC
+  BINH_THUAN
+  CA_MAU
+  CAO_BANG
+  DAK_LAK
+  DAK_NONG
+  DIEN_BIEN
+  DONG_NAI
+  DONG_THAP
+  GIA_LAI
+  HA_GIANG
+  HA_NAM
+  HA_TINH
+  HAI_DUONG
+  HAU_GIANG
+  HOA_BINH
+  HUNG_YEN
+  KHANH_HOA
+  KIEN_GIANG
+  KON_TUM
+  LAI_CHAU
+  LAM_DONG
+  LANG_SON
+  LAO_CAI
+  LONG_AN
+  NAM_DINH
+  NGHE_AN
+  NINH_BINH
+  NINH_THUAN
+  PHU_THO
+  PHU_YEN
+  QUANG_BINH
+  QUANG_NAM
+  QUANG_NGAI
+  QUANG_NINH
+  QUANG_TRI
+  SOC_TRANG
+  SON_LA
+  TAY_NINH
+  THAI_BINH
+  THAI_NGUYEN
+  THANH_HOA
+  THUA_THIEN_HUE
+  TIEN_GIANG
+  TRA_VINH
+  TUYEN_QUANG
+  VINH_LONG
+  VINH_PHUC
+  YEN_BAI
+  HA_NOI
+  HAI_PHONG
+  DA_NANG
+  HO_CHI_MINH
+  CAN_THO
 }
 
 enum Role {
@@ -97,47 +97,57 @@ enum Role {
   ADMIN
 }
 
+enum VoteType {
+  UP
+  DOWN
+}
+
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  image     String?
-  password  String?
-  favorites Favorite[]
-  isOAuth   Boolean  @default(false)
-  role      Role     @default(USER)
-  blogPosts Blog[]
+  id           String        @id @default(cuid())
+  name         String
+  email        String        @unique
+  image        String?
+  password     String?
+  favorites    Favorite[]
+  isOAuth      Boolean       @default(false)
+  role         Role          @default(USER)
+  blogPosts    Blog[]
   blogComments BlogComment[]
-  blogReplies Reply[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  blogReplies  Reply[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  BlogVote     BlogVote[]
+  CommentVote  CommentVote[]
+  ReplyVote    ReplyVote[]
 }
 
 model Location {
-  id        String   @id @default(cuid())
-  name      String
+  id          String     @id @default(cuid())
+  name        String
   description String
-  coverImage String
-  category Category
-  province Province
-  district String?
-  latitude  Float?
-  longitude Float?
-  favorites Favorite[]
-  blogs     Blog[] @relation("BlogLocations")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  coverImage  String
+  category    Category
+  province    Province
+  district    String?
+  latitude    Float?
+  longitude   Float?
+  favorites   Favorite[]
+  blogs       Blog[]     @relation("BlogLocations")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Favorite {
-  id        String   @id @default(cuid())
-  userId    String
+  id         String   @id @default(cuid())
+  userId     String
   locationId String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  user      User     @relation(fields: [userId], references: [id])
-  location  Location @relation(fields: [locationId], references: [id])
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, locationId])
 }
 
 model Blog {
@@ -148,9 +158,11 @@ model Blog {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  comments  BlogComment[] @relation()
-  author    User     @relation(fields: [authorId], references: [id])
-  locations Location[] @relation("BlogLocations")
+  comments  BlogComment[]
+  author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  locations Location[]    @relation("BlogLocations")
+  category Category
+  votes     BlogVote[]
 }
 
 model BlogComment {
@@ -161,9 +173,10 @@ model BlogComment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  replies    Reply[]
-  blog      Blog     @relation(fields: [blogId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  replies Reply[]
+  blog    Blog          @relation(fields: [blogId], references: [id])
+  user    User          @relation(fields: [userId], references: [id])
+  votes   CommentVote[]
 }
 
 model Reply {
@@ -174,6 +187,49 @@ model Reply {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  comment   BlogComment @relation(fields: [commentId], references: [id])
-  user      User        @relation(fields: [userId], references: [id])
+  comment BlogComment @relation(fields: [commentId], references: [id])
+  user    User        @relation(fields: [userId], references: [id])
+  votes   ReplyVote[]
+}
+
+model BlogVote {
+  id        String   @id @default(cuid())
+  blogId    String
+  userId    String
+  type      VoteType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, blogId])
+}
+
+model CommentVote {
+  id        String   @id @default(cuid())
+  commentId String
+  userId    String
+  type      VoteType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comment BlogComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
+}
+
+model ReplyVote {
+  id        String   @id @default(cuid())
+  replyId   String
+  userId    String
+  type      VoteType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reply Reply @relation(fields: [replyId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, replyId])
 }

@@ -1,6 +1,6 @@
-import { Controller, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Param, Put, Delete, Get } from '@nestjs/common';
 import { ReplyService } from './reply.service';
-import { CreateReplyDto, UpdateReplyDto } from './reply.dto';
+import { CreateReplyDto, UpdateReplyDto, VoteReplyDto } from './reply.dto';
 import { 
   ApiTags, 
   ApiOperation, 
@@ -60,5 +60,50 @@ export class ReplyController {
   @Delete(':id/:userId')
   delete(@Param('id') id: string, @Param('userId') userId: string) {
     return this.replyService.delete(id, userId);
+  }
+
+  @ApiOperation({ summary: 'Vote on a reply' })
+  @ApiParam({ name: 'id', description: 'Reply ID' })
+  @ApiParam({ name: 'userId', description: 'User ID' })
+  @ApiBody({ type: VoteReplyDto })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Vote registered successfully'
+  })
+  @ApiNotFoundResponse({ description: 'Reply not found' })
+  @Post(':id/vote/:userId')
+  vote(
+    @Param('id') id: string, 
+    @Param('userId') userId: string, 
+    @Body() voteDto: VoteReplyDto
+  ) {
+    return this.replyService.vote(id, userId, voteDto);
+  }
+
+  @ApiOperation({ summary: 'Get vote summary for a reply' })
+  @ApiParam({ name: 'id', description: 'Reply ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Vote summary retrieved successfully'
+  })
+  @ApiNotFoundResponse({ description: 'Reply not found' })
+  @Get(':id/votes')
+  getVoteSummary(@Param('id') id: string) {
+    return this.replyService.getVoteSummary(id);
+  }
+
+  @ApiOperation({ summary: 'Get user vote for a reply' })
+  @ApiParam({ name: 'id', description: 'Reply ID' })
+  @ApiParam({ name: 'userId', description: 'User ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'User vote retrieved successfully'
+  })
+  @Get(':id/vote/:userId')
+  getUserVote(
+    @Param('id') id: string,
+    @Param('userId') userId: string
+  ) {
+    return this.replyService.getUserVote(id, userId);
   }
 }

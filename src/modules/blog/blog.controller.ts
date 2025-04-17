@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { BlogService } from './blog.service';
-import { CreateBlogDto, UpdateBlogDto } from './blog.dto';
+import { CreateBlogDto, UpdateBlogDto, VoteBlogDto } from './blog.dto';
 import { 
   ApiTags, 
   ApiOperation, 
@@ -80,4 +80,50 @@ export class BlogController {
   delete(@Param('id') id: string, @Param('userId') userId: string) {
     return this.blogService.delete(id, userId);
   }
+
+  @ApiOperation({ summary: 'Vote on a blog post' })
+  @ApiParam({ name: 'id', description: 'Blog post ID' })
+  @ApiParam({ name: 'userId', description: 'User ID' })
+  @ApiBody({ type: VoteBlogDto })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Vote registered successfully'
+  })
+  @ApiNotFoundResponse({ description: 'Blog post not found' })
+  @Post(':id/vote/:userId')
+  vote(
+    @Param('id') id: string, 
+    @Param('userId') userId: string, 
+    @Body() voteDto: VoteBlogDto
+  ) {
+    return this.blogService.vote(id, userId, voteDto);
+  }
+
+  @ApiOperation({ summary: 'Get vote summary for a blog post' })
+  @ApiParam({ name: 'id', description: 'Blog post ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Vote summary retrieved successfully'
+  })
+  @ApiNotFoundResponse({ description: 'Blog post not found' })
+  @Get(':id/votes')
+  getVoteSummary(@Param('id') id: string) {
+    return this.blogService.getVoteSummary(id);
+  }
+
+  @ApiOperation({ summary: 'Get user vote for a blog post' })
+  @ApiParam({ name: 'id', description: 'Blog post ID' })
+  @ApiParam({ name: 'userId', description: 'User ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'User vote retrieved successfully'
+  })
+  @Get(':id/vote/:userId')
+  getUserVote(
+    @Param('id') id: string,
+    @Param('userId') userId: string
+  ) {
+    return this.blogService.getUserVote(id, userId);
+  }
 }
+

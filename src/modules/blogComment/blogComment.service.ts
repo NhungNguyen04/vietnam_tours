@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateBlogCommentDto, UpdateBlogCommentDto } from './blogComment.dto';
+import { CreateBlogCommentDto, UpdateBlogCommentDto, VoteCommentDto } from './blogComment.dto';
 import { prisma } from '@/prisma/prisma';
 
 @Injectable()
@@ -34,9 +34,20 @@ export class BlogCommentService {
                 image: true,
               },
             },
+            _count: {
+              select: {
+                votes: true,
+              },
+            },
           },
           orderBy: {
             createdAt: 'asc',
+          },
+        },
+        votes: true,
+        _count: {
+          select: {
+            votes: true,
           },
         },
       },
@@ -128,16 +139,116 @@ export class BlogCommentService {
       throw new Error('You are not authorized to delete this comment');
     }
 
-    // Delete all replies first
-    await prisma.reply.deleteMany({
-      where: { commentId: id },
-    });
-
-    // Then delete the comment
-    await prisma.blogComment.delete({
-      where: { id },
-    });
+    // Delete all votes and replies first
+    await prisma.$transaction([
+      prisma.replyVote.deleteMany({
+        where: { 
+          reply: {
+            commentId: id 
+          }
+        },
+      }),
+      prisma.reply.deleteMany({
+        where: { commentId: id },
+      }),
+      prisma.commentVote.deleteMany({
+        where: { commentId: id },
+      }),
+      prisma.blogComment.delete({
+        where: { id },
+      }),
+    ]);
 
     return { success: true, message: 'Comment deleted successfully' };
+  }
+
+  async vote(commentId: string, userId: string, voteDto: VoteCommentDto) {
+    const comment = await prisma.blogComment.findUnique({
+      where: { id: commentId },
+    });
+
+    if (!comment) {
+      throw new NotFoundException(`Comment with ID ${commentId} not found`);
+    }
+
+    // Check if user has already voted
+    const existingVote = await prisma.commentVote.findUnique({
+      where: {
+        userId_commentId: {
+          userId,
+          commentId,
+        },
+      },
+    });
+
+    if (existingVote) {
+      // If vote type is the same, remove the vote (toggle)
+      if (existingVote.type === voteDto.type) {
+        await prisma.commentVote.delete({
+          where: {
+            id: existingVote.id,
+          },
+        });
+        return { message: 'Vote removed successfully' };
+      } 
+      
+      // If vote type is different, update the vote
+      return prisma.commentVote.update({
+        where: {
+          id: existingVote.id,
+        },
+        data: {
+          type: voteDto.type,
+        },
+      });
+    }
+
+    // Create new vote
+    return prisma.commentVote.create({
+      data: {
+        type: voteDto.type,
+        user: {
+          connect: { id: userId },
+        },
+        comment: {
+          connect: { id: commentId },
+        },
+      },
+    });
+  }
+
+  async getVoteSummary(commentId: string) {
+    const comment = await prisma.blogComment.findUnique({
+      where: { id: commentId },
+      include: {
+        votes: true,
+      },
+    });
+
+    if (!comment) {
+      throw new NotFoundException(`Comment with ID ${commentId} not found`);
+    }
+
+    const upvotes = comment.votes.filter(vote => vote.type === 'UP').length;
+    const downvotes = comment.votes.filter(vote => vote.type === 'DOWN').length;
+
+    return {
+      upvotes,
+      downvotes,
+      total: upvotes - downvotes,
+    };
+  }
+
+  async getUserVote(commentId: string, userId: string) {
+    const vote = await prisma.commentVote.findUnique({
+      where: {
+        userId_commentId: {
+          userId,
+          commentId,
+        },
+      },
+    });
+
+    return vote ?? { type: null };
   }
 }

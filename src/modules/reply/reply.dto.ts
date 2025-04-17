@@ -19,3 +19,7 @@ export class UpdateReplyDto {
   @IsNotEmpty()
   content: string;
 }
+
+export class VoteReplyDto {
+  type: 'UP' | 'DOWN';
+}

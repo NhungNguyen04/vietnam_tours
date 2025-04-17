@@ -19,3 +19,7 @@ export class UpdateBlogCommentDto {
   @IsNotEmpty()
   content: string;
 }
+
+export class VoteCommentDto {
+  type: 'UP' | 'DOWN';
+}

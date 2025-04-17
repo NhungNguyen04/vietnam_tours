@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { BlogCommentService } from './blogComment.service';
-import { CreateBlogCommentDto, UpdateBlogCommentDto } from './blogComment.dto';
+import { CreateBlogCommentDto, UpdateBlogCommentDto, VoteCommentDto } from './blogComment.dto';
 import { 
   ApiTags, 
   ApiOperation, 
@@ -72,5 +72,50 @@ export class BlogCommentController {
   @Delete(':id/:userId')
   delete(@Param('id') id: string, @Param('userId') userId: string) {
     return this.commentService.delete(id, userId);
+  }
+
+  @ApiOperation({ summary: 'Vote on a comment' })
+  @ApiParam({ name: 'id', description: 'Comment ID' })
+  @ApiParam({ name: 'userId', description: 'User ID' })
+  @ApiBody({ type: VoteCommentDto })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Vote registered successfully'
+  })
+  @ApiNotFoundResponse({ description: 'Comment not found' })
+  @Post(':id/vote/:userId')
+  vote(
+    @Param('id') id: string, 
+    @Param('userId') userId: string, 
+    @Body() voteDto: VoteCommentDto
+  ) {
+    return this.commentService.vote(id, userId, voteDto);
+  }
+
+  @ApiOperation({ summary: 'Get vote summary for a comment' })
+  @ApiParam({ name: 'id', description: 'Comment ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Vote summary retrieved successfully'
+  })
+  @ApiNotFoundResponse({ description: 'Comment not found' })
+  @Get(':id/votes')
+  getVoteSummary(@Param('id') id: string) {
+    return this.commentService.getVoteSummary(id);
+  }
+
+  @ApiOperation({ summary: 'Get user vote for a comment' })
+  @ApiParam({ name: 'id', description: 'Comment ID' })
+  @ApiParam({ name: 'userId', description: 'User ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'User vote retrieved successfully'
+  })
+  @Get(':id/vote/:userId')
+  getUserVote(
+    @Param('id') id: string,
+    @Param('userId') userId: string
+  ) {
+    return this.commentService.getUserVote(id, userId);
   }
 }

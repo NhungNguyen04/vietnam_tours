@@ -1,5 +1,6 @@
 import { IsString, IsNotEmpty, IsArray, IsOptional } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Category } from '@prisma/client';
 
 export class CreateBlogDto {
   @ApiProperty({ description: 'Title of the blog post' })
@@ -16,9 +17,14 @@ export class CreateBlogDto {
     description: 'Array of location IDs associated with the blog post',
     type: [String]
   })
+
   @IsArray()
-  @IsNotEmpty()
   locationIds: string[];
+
+  @ApiProperty({ description: 'Category of the location mentioned' })
+  @IsString()
+  @IsNotEmpty()
+  category: Category;
 }
 
 export class UpdateBlogDto {
@@ -39,4 +45,8 @@ export class UpdateBlogDto {
   @IsArray()
   @IsOptional()
   locationIds?: string[];
+}
+
+export class VoteBlogDto {
+  type: 'UP' | 'DOWN';
 }
