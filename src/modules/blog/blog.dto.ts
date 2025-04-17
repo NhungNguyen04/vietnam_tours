@@ -19,6 +19,7 @@ export class CreateBlogDto {
   })
 
   @IsArray()
+  @IsOptional()
   locationIds: string[];
 
   @ApiProperty({ description: 'Category of the location mentioned' })
@@ -45,6 +46,11 @@ export class UpdateBlogDto {
   @IsArray()
   @IsOptional()
   locationIds?: string[];
+
+  @ApiPropertyOptional({ description: 'Updated category of the location mentioned' })
+  @IsString()
+  @IsOptional()
+  category?: Category;
 }
 
 export class VoteBlogDto {

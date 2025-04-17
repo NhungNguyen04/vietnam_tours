@@ -122,17 +122,42 @@ export class BlogService {
   }
 
   async create(userId: string, createBlogDto: CreateBlogDto) {
-    const { locationIds, ...blogData } = createBlogDto;
+    const {...blogData } = createBlogDto;
 
+    // Check if user exists
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    // Check if locations exist
+    if (blogData.locationIds && blogData.locationIds.length > 0) {
+      const locations = await prisma.location.findMany({
+        where: {
+          id: { in: blogData.locationIds },
+        },
+      });
+      if (locations.length !== blogData.locationIds.length) {
+        throw new NotFoundException(`Some locations not found`);
+      }
+    }
+    // Check if category is valid
+    const validCategories = Object.values(Category);
+    if (!validCategories.includes(blogData.category as Category)) {
+      throw new NotFoundException(`Invalid category`);
+    }
+
+    // Create the blog post
     return prisma.blog.create({
       data: {
         ...blogData,
         author: {
           connect: { id: userId },
         },
-        locations: {
-          connect: locationIds.map(id => ({ id })),
-        },
+        locations: blogData.locationIds && blogData.locationIds.length > 0 
+          ? { connect: blogData.locationIds.map(id => ({ id })) }
+          : undefined,
         category: blogData.category as Category, // Ensure category is cast or converted to the correct type
       },
       include: {
