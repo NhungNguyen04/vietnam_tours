@@ -32,35 +32,54 @@ export class AuthService {
   }
 
   async validateOAuthUser(userDetails: any) {
-    const { email, name } = userDetails
-
-    let user = await this.userService.findByEmail(email)
-
+    console.log('OAUTH VALIDATE: Starting with user details:', userDetails);
+    const { email, name } = userDetails;
+  
+    console.log('OAUTH VALIDATE: Looking up user with email:', email);
+    let user = await this.userService.findByEmail(email);
+  
     if (user) {
-      return user
+      console.log('OAUTH VALIDATE: Existing user found:', JSON.stringify(user));
+      return user;
     } else {
-      const newUser = await this.userService.createOAuth({ email, name })
-      user = await this.userService.findByEmail(newUser.email)
-      return user
+      console.log('OAUTH VALIDATE: No existing user, creating new OAuth user');
+      const newUser = await this.userService.createOAuth({ email, name });
+      console.log('OAUTH VALIDATE: New user created:', newUser);
+      user = await this.userService.findByEmail(newUser.email);
+      console.log('OAUTH VALIDATE: Retrieved new user:', JSON.stringify(user));
+      return user;
     }
   }
-
+  
   async login(user: any) {
-    const payload = { email: user.email, sub: user.id }
-
+    console.log('LOGIN METHOD: User object received:', JSON.stringify(user, null, 2));
+    
+    // Include the name in the payload
+    const payload = { 
+      email: user.email, 
+      sub: user.id,
+      name: user.name,
+      image: user.image
+    };
+    console.log('LOGIN METHOD: JWT payload:', payload);
+  
     // Generate a temporary code for mobile clients
-    const tempCode = this.generateTempCode(user)
-
-    return {
+    const tempCode = this.generateTempCode(user);
+  
+    const result = {
       user: {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role
+        role: user.role,
+        image: user.image,
       },
       access_token: this.jwtService.sign(payload),
-      temp_code: tempCode, // This can be used by mobile clients
-    }
+      temp_code: tempCode,
+    };
+    
+    console.log('LOGIN METHOD: Returning result with user image:', result.user.image);
+    return result;
   }
 
   // Generate a temporary code that can be exchanged for a token

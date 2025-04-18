@@ -88,4 +88,59 @@ export class LocationService {
       },
     });
   }
+
+  async findFavorite(userId: string) {
+    return prisma.favorite.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        location: true,
+      },
+    });
+  }
+
+  async addFavorite(userId: string, locationId: string) {
+    // Check if the favorite already exists
+    const existingFavorite = await prisma.favorite.findUnique({
+      where: {
+        userId_locationId: {
+          userId,
+          locationId,
+        },
+      },
+    });
+
+    if (existingFavorite) {
+      throw new Error('Favorite already exists');
+    }
+
+    return prisma.favorite.create({
+      data: {
+        userId,
+        locationId,
+      },
+    });
+  }
+
+  async removeFavorite(userId: string, locationId: string) {
+    const favorite = await prisma.favorite.findUnique({
+      where: {
+        userId_locationId: {
+          userId,
+          locationId,
+        },
+      },
+    });
+
+    if (!favorite) {
+      throw new NotFoundException(`Favorite not found`);
+    }
+
+    return prisma.favorite.delete({
+      where: {
+        id: favorite.id,
+      },
+    });
+  }
 }

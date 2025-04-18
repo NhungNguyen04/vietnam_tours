@@ -129,14 +129,14 @@ export class AuthController {
         Logger.log(`Redirecting to MOBILE app: ${mobileRedirectUrl}`);
         return res.redirect(mobileRedirectUrl);
       } else {
-        const webRedirect = `${process.env.FRONTEND_URL}/auth-success?token=${loginResult.access_token}`;
+        const webRedirect = `${process.env.FRONTEND_URL}/auth/auth-success?token=${loginResult.access_token}`;
         Logger.log(`Redirecting to WEB app: ${webRedirect}`);
         return res.redirect(webRedirect);
       }
     } catch (error) {
       Logger.error(`Error in Google callback: ${error.message}`);
       Logger.error(error.stack);
-      return res.redirect(`${process.env.FRONTEND_URL}/auth-error?message=server-error`);
+      return res.redirect(`${process.env.FRONTEND_URL}/auth/auth-error?message=server-error`);
     }
   }
 

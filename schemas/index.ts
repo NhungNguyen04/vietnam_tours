@@ -13,6 +13,10 @@ export type CreateUserInput = z.infer<typeof createUserSchema>;
 export const createOAuthSchema = createUserSchema.omit({ password: true });
 export type CreateOAuthInput = z.infer<typeof createOAuthSchema>;
 
-export const updateUserSchema = createUserSchema.partial();
+export const updateUserSchema = z.object({
+  name: z.string().min(2, { message: 'Name must be at least 2 characters' }).optional(),
+  image: z.string().url({ message: 'Invalid URL format' }).optional(),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters' }).optional(),
+});
 
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;

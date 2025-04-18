@@ -62,7 +62,6 @@ export class UserController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     try {
@@ -84,7 +83,6 @@ export class UserController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() body: unknown) {
     const result = updateUserSchema.safeParse(body);
