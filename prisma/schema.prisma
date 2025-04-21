@@ -120,6 +120,7 @@ model User {
   CommentVote  CommentVote[]
   ReplyVote    ReplyVote[]
   trips        TripParticipants[]
+  events       SaveEvent[]
 }
 
 model Location {
@@ -135,6 +136,7 @@ model Location {
   favorites   Favorite[]
   blogs       Blog[]     @relation("BlogLocations")
   trips       Trip[]
+  events      EventLocation[] 
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
@@ -262,4 +264,44 @@ model TripParticipants {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([tripId, userId])
+}
+
+model Event {
+  id          String     @id @default(cuid())
+  name        String
+  description String
+  coverImage  String
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  user        SaveEvent[]
+  locations EventLocation[] 
+}
+
+model EventLocation {
+  id          String     @id @default(cuid())
+  eventId     String
+  locationId  String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, locationId])
+
+}
+model SaveEvent {
+  id          String     @id @default(cuid())
+  userId      String
+  eventId     String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event      Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
