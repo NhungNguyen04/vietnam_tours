@@ -1,38 +1,76 @@
 /* eslint-disable prettier/prettier */
 import { prisma } from '@/prisma/prisma';
-import { Prisma } from '@prisma/client';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class EventService {
     constructor() {}
-
-    // Find all events
+    // Find all events with related locations and their location details
     async findAll() {
         return prisma.event.findMany({
-            orderBy: {
-                createdAt: 'desc',
+        orderBy: {
+            createdAt: 'desc',
+        },
+        include: {
+            locations: {
+                select: {
+                    location: {
+                      select: {
+                        id: true,
+                        name: true,
+                        province: true,
+                        category: true,
+                      },
+                    },
+                  },
             },
+        },
         });
     }
-    // Find an event by ID
+    // Find one
     async findOne(id: string) {
         const event = await prisma.event.findUnique({
-            where: { id },
+          where: { id },
+          include: {
+            locations:  {
+                select: {
+                    location: {
+                      select: {
+                        id: true,
+                        name: true,
+                        province: true,
+                        category: true,
+                      }
+                    },
+                  },
+              },
+          },
         });
-
+      
         if (!event) {
-            throw new NotFoundException(`Event with ID "${id}" not found`);
+          throw new NotFoundException(`Event with ID "${id}" not found`);
         }
-
+      
         return event;
-    }
+      }
     // Create a new event
     async create(data) {
-        return prisma.event.create({
-            data,
-        });
-    }
+        const { locations, ...eventData } = data;
+        
+        const payload = {
+          ...eventData,
+          locations: {
+            create: locations.map(location => ({
+              location: { connect: { id: location.locationId || location.id } },
+              startDate: location.startDateTime || eventData.startDate,
+              endDate: location.endDateTime || eventData.endDate,
+              description: location.description || null,
+            })),
+          },
+        };
+      
+        return prisma.event.create({ data: payload });
+      }
     // Update an event by ID
     async update(id: string, data) {
         try {
@@ -105,7 +143,7 @@ export class EventService {
         });
     }
     // Save event to favorites
-    async saveEvent(userId: string, eventId: string) {
+    async addSaveEvent(userId: string, eventId: string) {
         return prisma.saveEvent.create({
             data: {
                 userId,
@@ -114,7 +152,7 @@ export class EventService {
         });
     }
     // remove event from favorites
-    async removeEvent(userId: string, eventId: string) {
+    async removeSaveEvent(userId: string, eventId: string) {
         return prisma.saveEvent.deleteMany({
             where: {
                 userId,
@@ -122,7 +160,7 @@ export class EventService {
             },
         });
     }
-    async findEventByUserId(userId: string) {
+    async findSaveEvent(userId: string) {
         return prisma.saveEvent.findMany({
             where: {
                 userId,
@@ -131,5 +169,22 @@ export class EventService {
                 event: true,
             },
         });
+    }
+    async isEventSaved(userId: string, eventId: string) {
+        const savedEvent = await prisma.saveEvent.findFirst({
+            where: {
+                userId,
+                eventId,
+            },
+        });
+        return !!savedEvent;
+    }
+    async getSavedCount(eventId: string){
+        const count = await prisma.saveEvent.count({
+            where: {
+                eventId,
+            },
+        });
+        return count;
     }
 }

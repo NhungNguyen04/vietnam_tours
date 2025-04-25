@@ -74,6 +74,28 @@ export class LocationService {
     }
   }
 
+  async searchName(term: string) {
+    if (!term || term.length < 2) return [];
+  
+    const results = await prisma.location.findMany({
+      where: {
+        name: {
+          contains: term,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        district: true,
+        province: true,
+      },
+      take: 4,
+    });
+    return results;
+  }
+  
+
   async findByCategory(category: string) {
     return prisma.location.findMany({
       where: {

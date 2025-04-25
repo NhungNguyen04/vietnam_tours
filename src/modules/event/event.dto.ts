@@ -1,4 +1,4 @@
-import { Update } from './../../../../frontend-vonder/node_modules/next/dist/build/swc/types.d';
+/* eslint-disable prettier/prettier */
 import { IsString, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -12,11 +12,6 @@ export class CreateEventDto {
   @IsString()
   @IsNotEmpty()
   description: string;
-
-  @ApiProperty({ description: 'Date of the event' })
-  @IsString()
-  @IsNotEmpty()
-  date: string; // Consider using Date type if you want to handle date objects
 }
 
 export class UpdateEventDto {
@@ -29,9 +24,4 @@ export class UpdateEventDto {
   @IsString()
   @IsNotEmpty()
   description: string;
-
-  @ApiProperty({ description: 'Date of the event' })
-  @IsString()
-  @IsNotEmpty()
-  date: string; // Consider using Date type if you want to handle date objects
 }

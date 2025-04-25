@@ -284,10 +284,6 @@ model EventLocation {
   eventId     String
   locationId  String
   description String?
-  startDate   DateTime
-  endDate     DateTime
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
 
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
   location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
