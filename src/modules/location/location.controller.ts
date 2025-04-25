@@ -1,10 +1,13 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { LocationService } from './location.service';
 import { Prisma } from '@prisma/client';
+import { Logger } from '@nestjs/common';
 
 @Controller('location')
 export class LocationController {
   constructor(private readonly locationService: LocationService) {}
+  private readonly logger = new Logger(LocationController.name);
 
   @Post()
   create(@Body() createLocationDto: Prisma.LocationCreateInput) {
@@ -14,6 +17,12 @@ export class LocationController {
   @Get()
   findAll() {
     return this.locationService.findAll();
+  }
+  
+  @Get('search')
+  async search(@Query('term') term: string) {
+    this.logger.log(`Search requested for term: "${term}"`);
+    return this.locationService.searchName(term);
   }
 
   @Get(':id')
@@ -43,6 +52,8 @@ export class LocationController {
   remove(@Param('id') id: string) {
     return this.locationService.remove(id);
   }
+
+
 
   @Get('/favorite/:userid')
   findFavorite(@Param('userid') userid: string) {

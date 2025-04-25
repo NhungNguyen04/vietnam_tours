@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
 import { prisma } from '@/prisma/prisma';
 import { CreateOAuthInput, CreateUserInput, UpdateUserInput } from '@/schemas';

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { prisma } from '@/prisma/prisma';
 
@@ -51,16 +52,16 @@ export class LocationService {
       const location = await prisma.location.findUnique({
         where: { id },
       });
-      
+
       if (!location) {
         throw new NotFoundException(`Location with ID "${id}" not found`);
       }
-      
+
       // Delete all favorites associated with this location
       await prisma.favorite.deleteMany({
         where: { locationId: id },
       });
-      
+
       // Then delete the location
       return await prisma.location.delete({
         where: { id },
@@ -72,6 +73,28 @@ export class LocationService {
       throw error;
     }
   }
+
+  async searchName(term: string) {
+    if (!term || term.length < 2) return [];
+  
+    const results = await prisma.location.findMany({
+      where: {
+        name: {
+          contains: term,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        district: true,
+        province: true,
+      },
+      take: 4,
+    });
+    return results;
+  }
+  
 
   async findByCategory(category: string) {
     return prisma.location.findMany({
