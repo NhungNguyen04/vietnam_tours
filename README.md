@@ -12,8 +12,11 @@ bash
 Copy
 Edit
 1. development
+```bash
 npm run start:dev
-
-2. production
+```
+3. production
+```bash
 npm run build
 npm run start:prod
+```
