@@ -2,10 +2,11 @@
 A scalable and efficient server-side application built with NestJS.
 
 ## Installation
-bash
+```bash
 git clone https://github.com/your-username/your-repo-name.git
 cd your-repo-name
 npm install
+```
 Running the App
 bash
 Copy
