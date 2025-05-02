@@ -13,6 +13,9 @@ Copy
 Edit
 1. development
 ```bash
+npm install @prisma/client
+npm install prisma --save-dev
+npx prisma generate
 npm run start:dev
 ```
 3. production
