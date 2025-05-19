@@ -14,6 +14,8 @@ import { BlogCommentModule } from './modules/blogComment/blogComment.module';
 import { ReplyModule } from './modules/reply/reply.module';
 import { TripModule } from './modules/trip/trip.module';
 import { EventModule } from './modules/event/event.module';
+import { AgencyModule } from './modules/agency/agency.module';
+import { TourModule } from './modules/tour/tour.module';
 
 @Module({
   imports: [
@@ -25,10 +27,12 @@ import { EventModule } from './modules/event/event.module';
     BlogCommentModule,
     ReplyModule,
     TripModule,
+    AgencyModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    EventModule
+    EventModule,
+    TourModule
   ],
   controllers: [
     AppController,
