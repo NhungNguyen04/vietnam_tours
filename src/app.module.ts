@@ -16,6 +16,7 @@ import { TripModule } from './modules/trip/trip.module';
 import { EventModule } from './modules/event/event.module';
 import { AgencyModule } from './modules/agency/agency.module';
 import { TourModule } from './modules/tour/tour.module';
+import { FlightsModule } from './modules/flights/flights.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { TourModule } from './modules/tour/tour.module';
       isGlobal: true,
     }),
     EventModule,
-    TourModule
+    TourModule,
+    FlightsModule
   ],
   controllers: [
     AppController,
