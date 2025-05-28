@@ -56,4 +56,36 @@ export type CreateTourInput = z.infer<typeof createTourSchema>;
 export const updateTourSchema = createTourSchema.partial();
 export type UpdateTourInput = z.infer<typeof updateTourSchema>;
 
+export const createTourBookingSchema = z.object({
+  tourId: z.string(),
+  bookingDate: z.coerce.date(),
+  participants: z.number().int().positive().default(1),
+  notes: z.string().optional(),
+});
+
+export type CreateTourBookingInput = z.infer<typeof createTourBookingSchema>;
+
+export const updateTourBookingSchema = z.object({
+  status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']),
+  participants: z.number().int().positive().optional(),
+  notes: z.string().optional(),
+});
+
+export type UpdateTourBookingInput = z.infer<typeof updateTourBookingSchema>;
+
+export const createTourReviewSchema = z.object({
+  tourId: z.string(),
+  rating: z.number().int().min(1).max(5),
+  comment: z.string().optional(),
+});
+
+export type CreateTourReviewInput = z.infer<typeof createTourReviewSchema>;
+
+export const updateTourReviewSchema = z.object({
+  rating: z.number().int().min(1).max(5).optional(),
+  comment: z.string().optional(),
+});
+
+export type UpdateTourReviewInput = z.infer<typeof updateTourReviewSchema>;
+
 

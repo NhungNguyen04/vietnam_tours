@@ -16,6 +16,8 @@ import { TripModule } from './modules/trip/trip.module';
 import { EventModule } from './modules/event/event.module';
 import { AgencyModule } from './modules/agency/agency.module';
 import { TourModule } from './modules/tour/tour.module';
+import { TourBookingModule } from './modules/tourBooking/tourBooking.module';
+import { TourReviewModule } from './modules/tourReview/tourReview.module';
 
 @Module({
   imports: [
@@ -32,7 +34,9 @@ import { TourModule } from './modules/tour/tour.module';
       isGlobal: true,
     }),
     EventModule,
-    TourModule
+    TourModule,
+    TourBookingModule,
+    TourReviewModule
   ],
   controllers: [
     AppController,
