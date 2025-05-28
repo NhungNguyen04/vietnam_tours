@@ -16,6 +16,7 @@ import { TripModule } from './modules/trip/trip.module';
 import { EventModule } from './modules/event/event.module';
 import { AgencyModule } from './modules/agency/agency.module';
 import { TourModule } from './modules/tour/tour.module';
+import { FlightsModule } from './modules/flights/flights.module';
 import { TourBookingModule } from './modules/tourBooking/tourBooking.module';
 import { TourReviewModule } from './modules/tourReview/tourReview.module';
 
@@ -35,6 +36,7 @@ import { TourReviewModule } from './modules/tourReview/tourReview.module';
     }),
     EventModule,
     TourModule,
+    FlightsModule
     TourBookingModule,
     TourReviewModule
   ],
