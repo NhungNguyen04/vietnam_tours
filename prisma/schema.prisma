@@ -128,6 +128,7 @@ model User {
   trips        TripParticipants[]
   events       SaveEvent[]
   tourBookings TourBooking[]
+  tourReviews  TourReview[]
 }
 
 model Location {
@@ -349,6 +350,7 @@ model Tour {
   agency      Agency       @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   location    Location?     @relation(fields: [locationId], references: [id], onDelete: Cascade)
   bookings    TourBooking[]
+  reviews     TourReview[]  @relation("TourToTourReview")
 }
 
 model TourBooking {
@@ -366,7 +368,6 @@ model TourBooking {
   tour        Tour        @relation(fields: [tourId], references: [id], onDelete: Cascade)
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-
 model TourReview {
   id        String   @id @default(cuid())
   tourId    String
@@ -375,6 +376,8 @@ model TourReview {
   comment   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  tour      Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade, name: "TourToTourReview")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
 
   @@unique([tourId, userId])
 }
