@@ -36,7 +36,7 @@ import { TourReviewModule } from './modules/tourReview/tourReview.module';
     }),
     EventModule,
     TourModule,
-    FlightsModule
+    FlightsModule,
     TourBookingModule,
     TourReviewModule
   ],
