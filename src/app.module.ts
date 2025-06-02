@@ -38,7 +38,7 @@ import { TourReviewModule } from './modules/tourReview/tourReview.module';
     TourModule,
     FlightsModule
     TourBookingModule,
-    TourReviewModule
+    TourReviewModule,
   ],
   controllers: [
     AppController,
