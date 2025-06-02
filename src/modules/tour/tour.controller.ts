@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Controller,
   Get,
@@ -13,6 +14,7 @@ import { TourService } from './tour.service';
 import { CreateTourDto } from './dto/create-tour.dto';
 import { UpdateTourDto } from './dto/update-tour.dto';
 
+
 @Controller('tours')
 export class TourController {
   constructor(private readonly tourService: TourService) {}
@@ -22,6 +24,7 @@ export class TourController {
     return this.tourService.create(createTourDto, agencyId);
   }
 
+
   @Get()
   findAll(
     @Query('page') page?: number,
@@ -30,6 +33,7 @@ export class TourController {
     @Query('province') province?: string,
     @Query('minPrice') minPrice?: number,
     @Query('maxPrice') maxPrice?: number,
+    @Query('q') search?: string,
   ) {
     return this.tourService.findAll(
       page, 
@@ -37,7 +41,8 @@ export class TourController {
       category, 
       province, 
       minPrice, 
-      maxPrice
+      maxPrice,
+      search
     );
   }
 
