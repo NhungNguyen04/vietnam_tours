@@ -95,6 +95,7 @@ enum Province {
 enum Role {
   USER
   ADMIN
+  AGENCY
 }
 
 enum VoteType {
@@ -121,6 +122,8 @@ model User {
   ReplyVote    ReplyVote[]
   trips        TripParticipants[]
   events       SaveEvent[]
+  tourBookings TourBooking[]
+  tourReviews  TourReview[]
 }
 
 model Location {
@@ -137,6 +140,7 @@ model Location {
   blogs       Blog[]     @relation("BlogLocations")
   trips       Trip[]
   events      EventLocation[] 
+  tours       Tour[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
@@ -301,3 +305,82 @@ model SaveEvent {
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   event      Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
+
+model Agency {
+  id          String     @id @default(cuid())
+  name        String
+  email       String     @unique
+  password    String
+  description String?
+  logo        String?
+  website     String?
+  phoneNumber String?
+  address     String?
+  verified    Boolean    @default(false)
+  tours       Tour[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Tour {
+  id          String     @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  duration    Int        // in days
+  maxCapacity Int
+  images    String[]   // array of image URLs
+  itinerary   String     // JSON string with day-by-day plan
+  includes    String?    // JSON string of what's included
+  excludes    String?    // JSON string of what's excluded
+  startDates  DateTime[] // array of available start dates
+  agencyId    String
+  locationId  String?
+  category    Category?
+  province    Province?
+  district    String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  
+  agency      Agency       @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  location    Location?     @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  bookings    TourBooking[]
+  reviews     TourReview[]  @relation("TourToTourReview")
+}
+
+model TourBooking {
+  id          String     @id @default(cuid())
+  tourId      String
+  userId      String
+  bookingDate DateTime
+  status      BookingStatus @default(PENDING)
+  participants Int        @default(1)
+  totalPrice  Float
+  notes       String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  
+  tour        Tour        @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+model TourReview {
+  id        String   @id @default(cuid())
+  tourId    String
+  userId    String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tour      Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade, name: "TourToTourReview")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
+
+  @@unique([tourId, userId])
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+

@@ -14,6 +14,11 @@ import { BlogCommentModule } from './modules/blogComment/blogComment.module';
 import { ReplyModule } from './modules/reply/reply.module';
 import { TripModule } from './modules/trip/trip.module';
 import { EventModule } from './modules/event/event.module';
+import { AgencyModule } from './modules/agency/agency.module';
+import { TourModule } from './modules/tour/tour.module';
+import { FlightsModule } from './modules/flights/flights.module';
+import { TourBookingModule } from './modules/tourBooking/tourBooking.module';
+import { TourReviewModule } from './modules/tourReview/tourReview.module';
 
 @Module({
   imports: [
@@ -25,10 +30,15 @@ import { EventModule } from './modules/event/event.module';
     BlogCommentModule,
     ReplyModule,
     TripModule,
+    AgencyModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    EventModule
+    EventModule,
+    TourModule,
+    FlightsModule
+    TourBookingModule,
+    TourReviewModule
   ],
   controllers: [
     AppController,
