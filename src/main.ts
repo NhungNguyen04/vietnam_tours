@@ -26,7 +26,10 @@ async function bootstrap() {
   
   // Enable CORS
   app.enableCors({
-    origin: [process.env.FRONTEND_URL],
+    origin: [
+      process.env.FRONTEND_URL,        // e.g., https://vietnamtours.vercel.app
+      'http://localhost:3000'          // local dev frontend
+    ],
     credentials: true,
   });
   
