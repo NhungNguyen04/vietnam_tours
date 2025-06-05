@@ -19,6 +19,7 @@ import { TourModule } from './modules/tour/tour.module';
 import { FlightsModule } from './modules/flights/flights.module';
 import { TourBookingModule } from './modules/tourBooking/tourBooking.module';
 import { TourReviewModule } from './modules/tourReview/tourReview.module';
+import { BlogSaveModule } from './modules/blogSave/blogSave.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { TourReviewModule } from './modules/tourReview/tourReview.module';
     FlightsModule,
     TourBookingModule,
     TourReviewModule,
+    BlogSaveModule
   ],
   controllers: [
     AppController,
