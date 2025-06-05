@@ -19,9 +19,14 @@ import { TourModule } from './modules/tour/tour.module';
 import { FlightsModule } from './modules/flights/flights.module';
 import { TourBookingModule } from './modules/tourBooking/tourBooking.module';
 import { TourReviewModule } from './modules/tourReview/tourReview.module';
+import { BlogSaveModule } from './modules/blogSave/blogSave.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     UserModule,
     AuthModule,
     LocationModule,
@@ -31,14 +36,12 @@ import { TourReviewModule } from './modules/tourReview/tourReview.module';
     ReplyModule,
     TripModule,
     AgencyModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
     EventModule,
     TourModule,
     FlightsModule,
     TourBookingModule,
     TourReviewModule,
+    BlogSaveModule
   ],
   controllers: [
     AppController,
