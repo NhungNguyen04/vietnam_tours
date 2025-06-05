@@ -22,6 +22,10 @@ import { TourReviewModule } from './modules/tourReview/tourReview.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     UserModule,
     AuthModule,
     LocationModule,
@@ -31,9 +35,6 @@ import { TourReviewModule } from './modules/tourReview/tourReview.module';
     ReplyModule,
     TripModule,
     AgencyModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
     EventModule,
     TourModule,
     FlightsModule,
