@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable prettier/prettier */
 import { Injectable, HttpException, HttpStatus, Logger, OnModuleInit } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
@@ -77,48 +79,73 @@ export class FlightsService implements OnModuleInit {
   }
 
   // ... rest of your searchFlights method etc.
-  async searchFlights(searchParams: any): Promise<any> { // Replace 'any' with your actual response type
-    const token = await this.getAccessToken(); // This will now correctly be a string
-    const searchUrl = `${this.amadeusApiBaseUrl}/v2/shopping/flight-offers`;
+    async searchFlights(searchParams: any): Promise<any> {
+      const token = await this.getAccessToken();
+      const searchUrl = `${this.amadeusApiBaseUrl}/v2/shopping/flight-offers`;
 
-    // ... (rest of your searchFlights logic)
-    const queryParams = { ...searchParams };
-    if (queryParams.adults) queryParams.adults = Number(queryParams.adults);
-    // ... other param processing ...
+      const queryParams: any = {
+        originLocationCode: searchParams.originLocationCode,
+        destinationLocationCode: searchParams.destinationLocationCode,
+        departureDate: searchParams.departureDate,
+        adults: Number(searchParams.adults || 1),
+        travelClass: searchParams.travelClass || 'ECONOMY',
+        nonStop: searchParams.nonStop === 'true' || searchParams.nonStop === true,
+        currencyCode: searchParams.currencyCode || 'EUR',
+        max: searchParams.max ? Number(searchParams.max) : 10,
+      };
 
-    this.logger.log(`Searching flights with params: ${JSON.stringify(queryParams)} using token: ${token.substring(0,10)}...`); // Log part of token for verification
+      if (searchParams.children && Number(searchParams.children) > 0) {
+        queryParams.children = Number(searchParams.children);
+      }
 
-    try {
-      const response = await firstValueFrom(
-        this.httpService.get<any>(searchUrl, { // Replace 'any' with AmadeusFlightSearchResponse
-          headers: { Authorization: `Bearer ${token}` },
-          params: queryParams,
-        }).pipe(
-          map(res => res.data),
-          catchError((error: AxiosError) => {
-            // ... your error handling ...
-            this.logger.error(`Amadeus API Error: ${error.response?.status}`, error.response?.data || error.message);
-            const amadeusError = error.response?.data as any;
-            let message = 'Error fetching flights from Amadeus';
-            if (amadeusError && amadeusError.errors && amadeusError.errors.length > 0) {
-                message = amadeusError.errors.map(e => `${e.title} (code: ${e.code}): ${e.detail}`).join(', ');
-            }
-            throw new HttpException(
+      if (searchParams.maxPrice && Number(searchParams.maxPrice) > 0) {
+        queryParams.maxPrice = Number(searchParams.maxPrice);
+      }
+
+      // Clean up params
+      Object.keys(queryParams).forEach(
+        key => (queryParams[key] === undefined || queryParams[key] === null) && delete queryParams[key]
+      );
+
+      this.logger.log(`Searching flights with params: ${JSON.stringify(queryParams)} using token: ${token.substring(0, 10)}...`);
+
+      try {
+        const response = await firstValueFrom(
+          this.httpService.get<any>(searchUrl, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: queryParams,
+          }).pipe(
+            map(res => res.data),
+            catchError((error: AxiosError) => {
+              const amadeusError = error.response?.data as {
+                errors?: { title: string; code: number | string; detail?: string; status?: string }[];
+              };
+              let message = 'Error fetching flights from Amadeus';
+              if ((amadeusError?.errors ?? []).length > 0) {
+                message = (amadeusError.errors ?? []).map(e =>
+                  `${e.title} (code: ${e.code}): ${e.detail || e.status}`
+                ).join(', ');
+              }
+              this.logger.error(`Amadeus API Error: ${error.response?.status}`, amadeusError || error.message);
+              throw new HttpException(
                 {
-                    statusCode: error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
-                    message: message,
-                    amadeusErrors: amadeusError?.errors,
+                  statusCode: error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+                  message,
+                  amadeusErrors: amadeusError?.errors,
                 },
                 error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR
-            );
-          }),
-        ),
-      );
-      return response;
-    } catch (error) {
-      if (error instanceof HttpException) throw error;
-      this.logger.error('Unexpected error during flight search', error.stack);
-      throw new HttpException('An unexpected error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
+              );
+            }),
+          )
+        );
+
+        return response;
+      } catch (error) {
+        this.logger.error('Unexpected error during flight search', error.stack);
+        throw new HttpException('An unexpected error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     }
-  }
+
 }

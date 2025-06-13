@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { prisma } from '@/prisma/prisma';
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 
