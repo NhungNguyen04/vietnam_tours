@@ -19,9 +19,15 @@ import { TourModule } from './modules/tour/tour.module';
 import { FlightsModule } from './modules/flights/flights.module';
 import { TourBookingModule } from './modules/tourBooking/tourBooking.module';
 import { TourReviewModule } from './modules/tourReview/tourReview.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { PrismaModule } from '../prisma/prisma.module'; // Add this import
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    PrismaModule,
     UserModule,
     AuthModule,
     LocationModule,
@@ -31,14 +37,12 @@ import { TourReviewModule } from './modules/tourReview/tourReview.module';
     ReplyModule,
     TripModule,
     AgencyModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
     EventModule,
     TourModule,
     FlightsModule,
     TourBookingModule,
     TourReviewModule,
+    DashboardModule,
   ],
   controllers: [
     AppController,

@@ -171,6 +171,7 @@ model Blog {
   authorId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  confirmed Boolean  @default(false)
 
   comments  BlogComment[]
   author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
