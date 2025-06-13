@@ -19,6 +19,7 @@ import { TourModule } from './modules/tour/tour.module';
 import { FlightsModule } from './modules/flights/flights.module';
 import { TourBookingModule } from './modules/tourBooking/tourBooking.module';
 import { TourReviewModule } from './modules/tourReview/tourReview.module';
+import { HotelsModule } from './modules/hotels/hotels.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { PrismaModule } from '../prisma/prisma.module'; // Add this import
 import { BlogSaveModule } from './modules/blogSave/blogSave.module';
@@ -44,6 +45,7 @@ import { BlogSaveModule } from './modules/blogSave/blogSave.module';
     FlightsModule,
     TourBookingModule,
     TourReviewModule,
+    HotelsModule,
     DashboardModule,
     BlogSaveModule,
   ],

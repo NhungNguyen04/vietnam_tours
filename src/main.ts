@@ -54,6 +54,18 @@ async function bootstrap() {
       }
     }),
   );
+
+  app.enableCors({
+    origin: ['http://localhost:3000', 'http://localhost:3001'], // Add your frontend URLs
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+  });
+
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true,
+    whitelist: true,
+    forbidNonWhitelisted: true,
+  }));
   
   // Initialize passport
   app.use(passport.initialize());
