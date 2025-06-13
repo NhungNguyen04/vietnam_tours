@@ -21,11 +21,13 @@ import { TourBookingModule } from './modules/tourBooking/tourBooking.module';
 import { TourReviewModule } from './modules/tourReview/tourReview.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { PrismaModule } from '../prisma/prisma.module'; // Add this import
+import { BlogSaveModule } from './modules/blogSave/blogSave.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
     PrismaModule,
     UserModule,
@@ -43,6 +45,7 @@ import { PrismaModule } from '../prisma/prisma.module'; // Add this import
     TourBookingModule,
     TourReviewModule,
     DashboardModule,
+    BlogSaveModule,
   ],
   controllers: [
     AppController,

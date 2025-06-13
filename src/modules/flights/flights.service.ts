@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { firstValueFrom, map, catchError } from 'rxjs';
 import { AxiosError } from 'axios';
 
-// ... (your interfaces and DTOs if any) ...
 
 @Injectable()
 export class FlightsService implements OnModuleInit {
@@ -21,8 +20,6 @@ export class FlightsService implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    // ... your existing onModuleInit logic to load and validate configs ...
-    // For example:
     this.amadeusClientId = this.configService.get<string>('AMADEUS_CLIENT_ID') as string;
     this.amadeusClientSecret = this.configService.get<string>('AMADEUS_CLIENT_SECRET') as string;
     this.amadeusApiBaseUrl = this.configService.get<string>('AMADEUS_API_BASE_URL') as string;
@@ -37,9 +34,7 @@ export class FlightsService implements OnModuleInit {
   private async getAccessToken(): Promise<string> {
     if (this.accessToken && this.tokenExpiryTime && Date.now() < this.tokenExpiryTime) {
       this.logger.log('Using cached Amadeus access token');
-      // If this.accessToken exists and is valid, it's guaranteed to be a string here
-      // by the logic that sets it. So, a type assertion is safe.
-      return this.accessToken as string; // <--- FIX: Add "as string"
+      return this.accessToken as string; 
     }
 
     this.logger.log('Fetching new Amadeus access token');
