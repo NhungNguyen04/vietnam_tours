@@ -1,6 +1,6 @@
 # 🌄 Vonders – Vietnam Scenic Explorer
 ![Home Page Screenshot](./public/Screenshot_13-6-2025_131045_front-end-vonder.vercel.app.jpeg)
-**Vonders** is a web-based platform to explore Vietnam’s most iconic destinations, cultural events, and travel tours. It supports different user roles with rich travel features and community interaction.
+**Vonders** is a web-based platform to explore Vietnam’s most iconic destinations, cultural events, and travel tours. It supports different user roles with rich travel features and community interaction in English and Vietnamesse.
 ---
 **Website:** https://front-end-vonder.vercel.app
 **Frontend repo:** https://github.com/dngan0365/front-end-vonder
