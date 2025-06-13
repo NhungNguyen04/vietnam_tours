@@ -103,6 +103,11 @@ enum VoteType {
   DOWN
 }
 
+enum ChatRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
 model User {
   id           String        @id @default(cuid())
   name         String
@@ -124,6 +129,8 @@ model User {
   events       SaveEvent[]
   tourBookings TourBooking[]
   tourReviews  TourReview[]
+  titleChats   TitleChat[]
+  savedBlogs   SaveBlog[]
 }
 
 model Location {
@@ -165,12 +172,14 @@ model Blog {
   authorId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  confirmed Boolean  @default(false)
 
   comments  BlogComment[]
   author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
   locations Location[]    @relation("BlogLocations")
   category Category
   votes     BlogVote[]
+  savedBy   SaveBlog[]    // Opposite relation for SaveBlog
 }
 
 model BlogComment {
@@ -185,6 +194,19 @@ model BlogComment {
   blog    Blog          @relation(fields: [blogId], references: [id])
   user    User          @relation(fields: [userId], references: [id])
   votes   CommentVote[]
+}
+
+model SaveBlog {
+  id        String   @id @default(cuid())
+  userId    String
+  blogId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blog Blog @relation(fields: [blogId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, blogId])
 }
 
 model Reply {
@@ -384,3 +406,21 @@ enum BookingStatus {
   COMPLETED
 }
 
+model Chat {
+  id          String     @id @default(cuid())
+  role        ChatRole
+  content     String
+  titleChat   TitleChat? @relation(fields: [titleChatId], references: [id], onDelete: Cascade)
+  titleChatId String?
+  createdAt   DateTime   @default(now())
+}
+
+model TitleChat {
+  id          String   @id @default(cuid())
+  title       String
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id])
+  chats       Chat[]
+}

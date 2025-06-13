@@ -20,9 +20,17 @@ import { FlightsModule } from './modules/flights/flights.module';
 import { TourBookingModule } from './modules/tourBooking/tourBooking.module';
 import { TourReviewModule } from './modules/tourReview/tourReview.module';
 import { HotelsModule } from './modules/hotels/hotels.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { PrismaModule } from '../prisma/prisma.module'; // Add this import
+import { BlogSaveModule } from './modules/blogSave/blogSave.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    PrismaModule,
     UserModule,
     AuthModule,
     LocationModule,
@@ -32,15 +40,14 @@ import { HotelsModule } from './modules/hotels/hotels.module';
     ReplyModule,
     TripModule,
     AgencyModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
     EventModule,
     TourModule,
     FlightsModule,
     TourBookingModule,
     TourReviewModule,
     HotelsModule,
+    DashboardModule,
+    BlogSaveModule,
   ],
   controllers: [
     AppController,

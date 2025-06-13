@@ -25,7 +25,13 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   
   // Enable CORS
-  app.enableCors();
+  app.enableCors({
+    origin: [
+      process.env.FRONTEND_URL,        // e.g., https://vietnamtours.vercel.app
+      'http://localhost:3000'          // local dev frontend
+    ],
+    credentials: true,
+  });
   
   // Swagger setup
   const config = new DocumentBuilder()

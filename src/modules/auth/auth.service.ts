@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, UnauthorizedException, Logger } from "@nestjs/common"
 import { JwtService } from "@nestjs/jwt"
 import { UserService } from "../user/user.service"
@@ -65,7 +66,7 @@ export class AuthService {
   
     // Generate a temporary code for mobile clients
     const tempCode = this.generateTempCode(user);
-  
+    console.log('LOGIN METHOD: Generated temporary code:', this.jwtService.sign(payload));
     const result = {
       user: {
         id: user.id,

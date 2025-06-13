@@ -1,9 +1,12 @@
+/* eslint-disable prettier/prettier */
+
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateTourDto } from './dto/create-tour.dto';
 import { UpdateTourDto } from './dto/update-tour.dto';
 import { Tour } from '@prisma/client';
 import { prisma } from '@/prisma/prisma';
 import { createTourSchema, updateTourSchema } from '../../../schemas';
+
 
 @Injectable()
 export class TourService {
@@ -37,6 +40,7 @@ export class TourService {
   province?: string,
   minPrice?: number,
   maxPrice?: number,
+  search?: string,
 ): Promise<{ tours: Tour[]; total: number; pages: number }> {
   const skip = (page - 1) * limit;
   
@@ -62,6 +66,42 @@ export class TourService {
     if (maxPriceNum) where.price.lte = maxPriceNum;
   }
 
+  // Search functionality
+  if (search) {
+    where.OR = [
+      {
+        title: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      },
+      {
+        description: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      },
+      // Search in location name if you have a location relation
+      {
+        location: {
+          name: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+      },
+      // Search in agency name if needed
+      {
+        agency: {
+          name: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
+      },
+    ];
+  }
+
   const [tours, total] = await Promise.all([
     prisma.tour.findMany({
       where,
@@ -81,7 +121,7 @@ export class TourService {
         createdAt: 'desc',
       },
     }),
-    prisma.tour.count({ where }),
+    prisma.tour.count({ where }) as Promise<number>,
   ]);
 
   const pages = Math.ceil(total / limitNum);

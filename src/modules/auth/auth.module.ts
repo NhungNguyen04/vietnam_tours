@@ -14,8 +14,8 @@ import { SessionSerializer } from './serializer/sessionSerializer';
     UserModule,
     PassportModule.register({ session: true }),
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your-secret-key',
-      signOptions: { expiresIn: '1d' },
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '7d' , algorithm: 'HS256',},
     }),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy, SessionSerializer],
